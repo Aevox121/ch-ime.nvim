@@ -1,0 +1,12 @@
+# Binaries / local test artifacts
+bin/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Neovim runtime artifacts
+doc/tags
