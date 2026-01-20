@@ -40,6 +40,15 @@ return {
   {
     "Aevox121/ch-ime.nvim",
     main = "ch-ime",
+    -- 默认 lazy-load：按键/命令触发加载
+    cmd = {
+      "ChImeToggle",
+      "ChImeEnable",
+      "ChImeDisable",
+      "ChImeInstall",
+      "ChImeDetect",
+      "ChImeStatus",
+    },
     opts = {
       enabled = false,
       -- 推荐：自动下载对应平台的 im-select 到 nvim-data
@@ -63,12 +72,23 @@ return {
 }
 ```
 
+如果你希望“启动后就自动下载/准备好 im-select”，可以额外加上：
+
+```lua
+event = "VeryLazy"
+```
+
 ## 状态栏（lualine）
 
 将 `require("ch-ime").statusline` 加到任意一个 section（例如 `lualine_x`）：
 
 ```lua
-{ require("ch-ime").statusline }
+{
+  function()
+    local ok, m = pcall(require, "ch-ime")
+    return ok and m.statusline() or "IME-"
+  end,
+}
 ```
 
 显示说明：

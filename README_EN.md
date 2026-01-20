@@ -28,6 +28,15 @@ Example plugin spec:
 {
   "yourname/ch-ime.nvim",
   main = "ch-ime",
+  -- Default lazy-load: load on keys/commands
+  cmd = {
+    "ChImeToggle",
+    "ChImeEnable",
+    "ChImeDisable",
+    "ChImeInstall",
+    "ChImeDetect",
+    "ChImeStatus",
+  },
   opts = {
     enabled = false,
     im_select = "auto", -- auto download per platform
@@ -47,13 +56,24 @@ Example plugin spec:
 }
 ```
 
+If you want `im-select` to be downloaded right after startup (without pressing keys first), add:
+
+```lua
+event = "VeryLazy"
+```
+
 ## Lualine
 
 Add `require("ch-ime").statusline` as a component:
 
 ```lua
 -- inside your lualine sections
-{ require("ch-ime").statusline }
+{
+  function()
+    local ok, m = pcall(require, "ch-ime")
+    return ok and m.statusline() or "IME-"
+  end,
+}
 ```
 
 ## Commands
