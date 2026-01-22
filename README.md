@@ -69,6 +69,20 @@ return {
       },
     },
   },
+
+  -- 状态栏（lualine）：默认加到 lualine_x
+  {
+    "nvim-lualine/lualine.nvim",
+    opts = function(_, opts)
+      opts.sections = opts.sections or {}
+      opts.sections.lualine_x = opts.sections.lualine_x or {}
+
+      table.insert(opts.sections.lualine_x, 1, function()
+        local ok, m = pcall(require, "ch-ime")
+        return ok and m.statusline() or "IME-"
+      end)
+    end,
+  },
 }
 ```
 
@@ -80,7 +94,9 @@ event = "VeryLazy"
 
 ## 状态栏（lualine）
 
-将 `require("ch-ime").statusline` 加到任意一个 section（例如 `lualine_x`）：
+上面的 LazyVim 一键配置已默认把状态栏组件加到 `lualine_x`。
+
+如果你想手动加到别的 section，可以将下面组件放进任意位置：
 
 ```lua
 {
