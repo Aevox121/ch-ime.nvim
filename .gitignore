@@ -10,3 +10,6 @@ Thumbs.db
 
 # Neovim runtime artifacts
 doc/tags
+
+# Local planning notes
+PRD.md
