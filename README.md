@@ -4,6 +4,7 @@
 
 - 普通/命令模式：自动切到英文
 - 插入模式：自动切到中文
+- 终端模式：默认生效（终端 Normal 自动切英文）
 - 一键开关：默认关闭（避免打扰原有输入习惯）
 - 状态栏提示：`IME+` / `IME-`
 - 支持 Windows / macOS，并支持自动下载对应平台的 `im-select`
@@ -51,6 +52,7 @@ return {
     },
     opts = {
       enabled = false,
+      enable_terminal = true,
       -- 推荐：自动下载对应平台的 im-select 到 nvim-data
       im_select = "auto",
       install = { on_startup = true },
@@ -125,6 +127,8 @@ event = "VeryLazy"
 
 默认配置（可在 `opts = { ... }` 覆盖）：
 
+终端默认生效，如需排除终端，设置 `enable_terminal = false`。
+
 ```lua
 {
   enabled = false,
@@ -149,7 +153,8 @@ event = "VeryLazy"
     urls = nil, -- 可覆盖下载地址（公司内网/镜像源用）
   },
 
-  exclude_buftype = { "prompt", "terminal", "nofile" },
+  enable_terminal = true,
+  exclude_buftype = { "prompt", "nofile" },
   exclude_filetypes = { "TelescopePrompt" },
 
   statusline = {

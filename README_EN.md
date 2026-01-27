@@ -7,6 +7,7 @@ MVP scope:
 - Can auto-download `im-select` per platform (recommended)
 - Insert mode -> Chinese (`2052`)
 - Normal mode -> English (`1033`)
+- Terminal Normal mode -> English (`1033`)
 - Toggleable (default disabled)
 - Statusline shows feature on/off
 
@@ -39,6 +40,7 @@ Example plugin spec:
   },
   opts = {
     enabled = false,
+    enable_terminal = true,
     im_select = "auto", -- auto download per platform
     normal_im = "1033",
     insert_im = "2052",
@@ -101,7 +103,8 @@ Defaults:
   debounce_ms = 50,
   timeout_ms = 500,
   install = { enabled = true, on_startup = true, dir = nil },
-  exclude_buftype = { "prompt", "terminal", "nofile" },
+  enable_terminal = true,
+  exclude_buftype = { "prompt", "nofile" },
   exclude_filetypes = { "TelescopePrompt" },
   statusline = { enabled = "IME+", disabled = "IME-" },
 }

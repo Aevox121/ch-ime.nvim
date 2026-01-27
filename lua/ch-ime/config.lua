@@ -33,7 +33,8 @@ M.defaults = {
     -- }
     urls = nil,
   },
-  exclude_buftype = { "prompt", "terminal", "nofile" },
+  enable_terminal = true,
+  exclude_buftype = { "prompt", "nofile" },
   exclude_filetypes = { "TelescopePrompt" },
   statusline = {
     enabled = "IME+",
@@ -53,6 +54,10 @@ function M.merge(user_opts)
   end
 
   local opts = vim.tbl_deep_extend("force", {}, M.defaults, user_opts)
+
+  if not opts.enable_terminal and not util.contains(opts.exclude_buftype, "terminal") then
+    table.insert(opts.exclude_buftype, "terminal")
+  end
 
   -- Allow a shareable relative path like "bin/im-select.exe".
   -- We resolve it against the plugin root if it exists.
