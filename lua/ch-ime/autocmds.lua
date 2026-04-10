@@ -58,6 +58,27 @@ function M.setup(opts, state)
       end
     end,
   })
+
+  if opts.restore_on_focus_lost then
+    vim.api.nvim_create_autocmd("FocusLost", {
+      group = group,
+      callback = function()
+        core.switch_to(opts, state, opts.insert_im, true)
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("FocusGained", {
+      group = group,
+      callback = function()
+        local mode = vim.fn.mode()
+        if mode == "i" or mode == "R" or vim.startswith(mode, "t") then
+          core.switch_to(opts, state, opts.insert_im, true)
+        else
+          core.switch_to(opts, state, opts.normal_im, true)
+        end
+      end,
+    })
+  end
 end
 
 return M

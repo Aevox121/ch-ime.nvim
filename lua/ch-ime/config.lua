@@ -33,6 +33,7 @@ M.defaults = {
     -- }
     urls = nil,
   },
+  restore_on_focus_lost = true,
   enable_terminal = true,
   exclude_buftype = { "prompt", "nofile" },
   exclude_filetypes = { "TelescopePrompt" },

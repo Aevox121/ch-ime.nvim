@@ -49,7 +49,8 @@ end
 ---@param opts table
 ---@param state table
 ---@param target_locale string
-function M.switch_to(opts, state, target_locale)
+---@param force? boolean  skip buf_allowed / debounce checks (used by focus events)
+function M.switch_to(opts, state, target_locale, force)
   if not state.enabled then
     return
   end
@@ -67,13 +68,15 @@ function M.switch_to(opts, state, target_locale)
     end
   end
 
-  local bufnr = vim.api.nvim_get_current_buf()
-  if not M.buf_allowed(opts, bufnr) then
-    return
-  end
+  if not force then
+    local bufnr = vim.api.nvim_get_current_buf()
+    if not M.buf_allowed(opts, bufnr) then
+      return
+    end
 
-  if M.debounced(opts, state) then
-    return
+    if M.debounced(opts, state) then
+      return
+    end
   end
 
   local adapter, adapter_err = M.get_adapter(opts)
