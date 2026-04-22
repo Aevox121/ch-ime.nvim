@@ -133,9 +133,6 @@ end
 ---@param notify boolean
 ---@return string|nil, string|nil
 function M.ensure_sync(opts, state, notify)
-  if type(opts.im_select) ~= "string" or opts.im_select ~= "auto" then
-    return nil, "im_select is not set to 'auto'"
-  end
   if not (opts.install and opts.install.enabled) then
     return nil, "auto install disabled (opts.install.enabled=false)"
   end
@@ -146,10 +143,21 @@ function M.ensure_sync(opts, state, notify)
   end
 
   local dir = install_dir(opts)
-  ensure_dir(dir)
-
   local bin_name = (p == "windows") and "im-select.exe" or "im-select"
   local dest = vim.fs.joinpath(dir, "bin", bin_name)
+
+  -- Accept either the literal sentinel "auto" (initial setup) or a path that
+  -- already points at our managed binary (post-install re-invocation, e.g.
+  -- :ChImeInstall to heal/redownload after auto resolution replaced
+  -- opts.im_select with dest). Anything else (user-provided PATH name, custom
+  -- cmd table, absolute path to a foreign binary) is not our business.
+  local is_auto = opts.im_select == "auto"
+  local is_managed = type(opts.im_select) == "string" and opts.im_select == dest
+  if not (is_auto or is_managed) then
+    return nil, "im_select is not set to 'auto' (currently: " .. tostring(opts.im_select) .. ")"
+  end
+
+  ensure_dir(dir)
 
   if util.exists(dest) and validate_binary(p, dest) then
     return dest, nil
