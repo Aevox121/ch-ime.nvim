@@ -57,9 +57,11 @@ return {
       im_select = "auto",
       install = { on_startup = true },
 
-      -- Windows 默认 locale（常见情况可直接用）
-      normal_im = "1033", -- English (US)
-      insert_im = "2052", -- Chinese (PRC)
+      -- 可以写成一个字符串（所有平台相同），或 per-platform 表按平台自动取值：
+      --   normal_im = { windows = "1033", macos = "com.apple.keylayout.ABC" }
+      --   insert_im = { windows = "2052", macos = "com.apple.inputmethod.SCIM.ITABC" }
+      -- 插件默认即上述表，通常只需覆盖 insert_im 到你的中文输入法 key。
+      -- 例如使用搜狗：insert_im = { macos = "com.sogou.inputmethod.sogou.pinyin" }
     },
     keys = {
       {
@@ -138,9 +140,10 @@ event = "VeryLazy"
   -- 或者：绝对路径 / 相对路径（相对插件根目录，例如 "bin/im-select.exe"）
   im_select = "auto",
 
-  -- Windows：locale
-  normal_im = "1033",
-  insert_im = "2052",
+  -- 可以写成字符串（所有平台相同），或 per-platform 表 { windows = ..., macos = ..., linux = ... }。
+  -- 默认即下面这组值，通常按需覆盖：
+  normal_im = { windows = "1033", macos = "com.apple.keylayout.ABC" },
+  insert_im = { windows = "2052", macos = "com.apple.inputmethod.SCIM.ITABC" },
 
   debounce_ms = 50,
   timeout_ms = 500,
@@ -179,10 +182,28 @@ event = "VeryLazy"
 
 ### macOS：如何设置 `normal_im` / `insert_im`？
 
-macOS 的 `im-select` 输出类似：`com.apple.keylayout.US`
+macOS 的 `im-select` 输出是输入源标识符，例如：`com.apple.keylayout.US`。
 
-1) 切到英文输入源（例如 U.S.），运行 `:ChImeDetect`，把输出填到 `normal_im`
+1) 切到英文输入源（例如 U.S. / ABC），运行 `:ChImeDetect`，把输出填到 `normal_im`
 2) 切到中文输入源，运行 `:ChImeDetect`，把输出填到 `insert_im`
+
+常见中文输入法 key 参考：
+
+| 输入法 | key |
+|---|---|
+| 系统自带拼音 | `com.apple.inputmethod.SCIM.ITABC` |
+| 搜狗输入法 | `com.sogou.inputmethod.sogou.pinyin` |
+| 微信输入法 | `com.tencent.inputmethod.wetype.pinyin` |
+| 鼠须管 Squirrel | `im.rime.inputmethod.Squirrel.Hans` |
+
+> 多平台共用一份配置时，推荐用 per-platform 表：
+>
+> ```lua
+> insert_im = {
+>   windows = "2052",
+>   macos = "com.sogou.inputmethod.sogou.pinyin",
+> },
+> ```
 
 ### Windows Terminal / cmd / powershell 下不生效？
 

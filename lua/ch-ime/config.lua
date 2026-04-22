@@ -12,8 +12,11 @@ M.defaults = {
   -- "auto" will download a suitable binary (Windows/macOS) into stdpath("data").
   -- You can still set it to a PATH executable ("im-select.exe" / "im-select") or a full path.
   im_select = "auto",
-  normal_im = "1033",
-  insert_im = "2052",
+  -- normal_im / insert_im accept either a plain string (same key on every
+  -- platform) or a per-platform table: { windows = ..., macos = ..., linux = ... }.
+  -- The table form is resolved against the current platform in merge().
+  normal_im = { windows = "1033", macos = "com.apple.keylayout.ABC" },
+  insert_im = { windows = "2052", macos = "com.apple.inputmethod.SCIM.ITABC" },
   debounce_ms = 50,
   timeout_ms = 500,
   install = {
@@ -47,6 +50,31 @@ M.defaults = {
   },
 }
 
+---@return "windows"|"macos"|"linux"|"other"
+local function current_platform()
+  if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+    return "windows"
+  end
+  if vim.fn.has("mac") == 1 then
+    return "macos"
+  end
+  if vim.fn.has("linux") == 1 then
+    return "linux"
+  end
+  return "other"
+end
+
+---Resolve a per-platform IM key table to the entry for the current platform.
+---String values pass through unchanged (backward compatible).
+---@param val any
+---@return string|nil
+local function resolve_per_platform(val)
+  if type(val) ~= "table" then
+    return val
+  end
+  return val[current_platform()]
+end
+
 ---@param user_opts? table
 ---@return table
 function M.merge(user_opts)
@@ -55,6 +83,9 @@ function M.merge(user_opts)
   end
 
   local opts = vim.tbl_deep_extend("force", {}, M.defaults, user_opts)
+
+  opts.normal_im = resolve_per_platform(opts.normal_im)
+  opts.insert_im = resolve_per_platform(opts.insert_im)
 
   if not opts.enable_terminal and not util.contains(opts.exclude_buftype, "terminal") then
     table.insert(opts.exclude_buftype, "terminal")

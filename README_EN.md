@@ -42,8 +42,10 @@ Example plugin spec:
     enabled = false,
     enable_terminal = true,
     im_select = "auto", -- auto download per platform
-    normal_im = "1033",
-    insert_im = "2052",
+    -- Per-platform table (recommended for multi-machine users). A plain
+    -- string also works if every platform uses the same key.
+    normal_im = { windows = "1033", macos = "com.apple.keylayout.ABC" },
+    insert_im = { windows = "2052", macos = "com.apple.inputmethod.SCIM.ITABC" },
     install = { on_startup = true },
   },
   keys = {
@@ -98,8 +100,10 @@ Defaults:
   -- or "im-select.exe" / "im-select" (use PATH)
   -- or a relative path like "bin/im-select.exe" (relative to plugin root)
   -- or a table like {"bash", "-lc", "im-select.exe"}
-  normal_im = "1033",
-  insert_im = "2052",
+  -- string (same key on every platform) OR per-platform table
+  --   { windows = ..., macos = ..., linux = ... }
+  normal_im = { windows = "1033", macos = "com.apple.keylayout.ABC" },
+  insert_im = { windows = "2052", macos = "com.apple.inputmethod.SCIM.ITABC" },
   debounce_ms = 50,
   timeout_ms = 500,
   install = { enabled = true, on_startup = true, dir = nil },
@@ -127,8 +131,26 @@ im_select = { "bash", "-lc", "im-select.exe" }
 
 On macOS, `im-select` returns an input method key like `com.apple.keylayout.US`.
 
-- Switch to your desired English input source (e.g. U.S.), then run `:ChImeDetect` and set that value as `normal_im`.
+- Switch to your desired English input source (e.g. U.S. / ABC), then run `:ChImeDetect` and set that value as `normal_im`.
 - Switch to your desired Chinese input source, run `:ChImeDetect` again and set that value as `insert_im`.
+
+Common Chinese IME keys:
+
+| IME | key |
+|---|---|
+| System Pinyin | `com.apple.inputmethod.SCIM.ITABC` |
+| Sogou | `com.sogou.inputmethod.sogou.pinyin` |
+| WeChat | `com.tencent.inputmethod.wetype.pinyin` |
+| Squirrel (Rime) | `im.rime.inputmethod.Squirrel.Hans` |
+
+If you share one config across Windows and macOS machines, use the per-platform table form:
+
+```lua
+insert_im = {
+  windows = "2052",
+  macos = "com.sogou.inputmethod.sogou.pinyin",
+},
+```
 
 ## Linux Notes
 
