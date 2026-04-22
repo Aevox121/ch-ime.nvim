@@ -45,12 +45,16 @@ function M.set(opts, imkey)
   local proc = vim.system(cmd, { text = true })
   local res = proc:wait(opts.timeout_ms)
   if not res then
-    return false, "im-select timed out"
+    return false, "im-select timed out (key=" .. tostring(imkey) .. ")"
   end
   if res.code ~= 0 then
     local err = util.trim(res.stderr)
     if err == "" then
+      -- macOS im-select exits non-zero without stderr when the input source
+      -- id is not enabled in the system. Surface the key so users can fix
+      -- their config or enable the source in System Settings > Keyboard.
       err = "im-select failed with code " .. tostring(res.code)
+        .. " (key=" .. tostring(imkey) .. ", likely not enabled in System Settings > Keyboard)"
     end
     return false, err
   end
