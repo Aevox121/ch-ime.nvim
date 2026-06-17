@@ -42,18 +42,11 @@ end
 ---@return boolean, string|nil
 function M.set(opts, locale)
   local cmd = util.build_cmd(opts.im_select, { tostring(locale) })
-  local proc = vim.system(cmd, { text = true })
-  local res = proc:wait(opts.timeout_ms)
-  if not res then
-    return false, "im-select timed out"
-  end
-  if res.code ~= 0 then
-    local err = util.trim(res.stderr)
-    if err == "" then
-      err = "im-select failed with code " .. tostring(res.code)
-    end
-    return false, err
-  end
+  -- Fire-and-forget: a sync :wait() blocks the UI thread for the duration of
+  -- the im-select.exe spawn (30–200ms cold). With InsertEnter / InsertLeave /
+  -- TermEnter / TermLeave / FocusGained / FocusLost all routing through here,
+  -- that wait was the dominant source of UI lag on every mode/window switch.
+  vim.system(cmd, { text = true })
   return true, nil
 end
 
